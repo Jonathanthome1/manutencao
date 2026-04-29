@@ -244,67 +244,122 @@
 <div class="screen" id="s-base">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">‹</button>
-    <div style="flex:1;"><div class="topbar-title">Base de Equipamentos</div><div class="topbar-sub" id="base-sub">Cadastro</div></div>
-    <button class="topbar-right" onclick="goTo('s-base-novo')">+ Novo</button>
+    <div style="flex:1;"><div class="topbar-title">Base de Equipamentos</div><div class="topbar-sub">Selecione o tipo</div></div>
   </div>
   <div class="content">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="base-srch" placeholder="Buscar equipamento..." oninput="renderBase()" />
-    </div>
-    <div id="base-list"></div>
+    <div class="section-div">Tipos de equipamento</div>
+    <button class="home-btn" onclick="abrirBaseTipo('Forno')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🔥</div>
+      <div style="flex:1;"><div class="hb-title">Forno</div><div class="hb-desc" id="base-badge-Forno">Carregando...</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="abrirBaseTipo('Padeiro Noturno')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🌙</div>
+      <div style="flex:1;"><div class="hb-title">Padeiro Noturno</div><div class="hb-desc" id="base-badge-Padeiro-Noturno">Carregando...</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="abrirBaseTipo('Esqueleto')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🦴</div>
+      <div style="flex:1;"><div class="hb-title">Esqueleto</div><div class="hb-desc" id="base-badge-Esqueleto">Carregando...</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="abrirBaseTipo('Armário')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🚪</div>
+      <div style="flex:1;"><div class="hb-title">Armário</div><div class="hb-desc" id="base-badge-Armário">Carregando...</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="abrirBaseTipo('Freezer')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">❄️</div>
+      <div style="flex:1;"><div class="hb-title">Freezer</div><div class="hb-desc" id="base-badge-Freezer">Carregando...</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
   </div>
 </div>
 
-<!-- NOVO EQUIPAMENTO BASE -->
-<div class="screen" id="s-base-novo">
+<!-- BASE: MODELOS DE UM TIPO -->
+<div class="screen" id="s-base-tipo">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-base')">‹</button>
-    <div><div class="topbar-title">Novo Equipamento</div><div class="topbar-sub">Base de cadastro</div></div>
+    <div style="flex:1;"><div class="topbar-title" id="base-tipo-title">Modelos</div><div class="topbar-sub" id="base-tipo-sub"></div></div>
+    <button class="topbar-right" onclick="goTo('s-base-novo')">+ Modelo</button>
   </div>
   <div class="content">
-    <div class="card">
-      <div class="card-label">Tipo de equipamento</div>
-      <select id="base-tipo">
-        <option value="">Selecione...</option>
-        <option>Forno</option>
-        <option>Padeiro Noturno (Estufa)</option>
-        <option>Esqueleto</option>
-        <option>Armário</option>
-        <option>Fritadeira</option>
-        <option>Outro</option>
-      </select>
-    </div>
-    <div class="card">
-      <div class="card-label">Nº de Patrimônio</div>
-      <input type="text" id="base-patrimonio" placeholder="Ex: 0042" />
-    </div>
-    <div class="card">
-      <div class="card-label">Descrição / Modelo (opcional)</div>
-      <input type="text" id="base-descricao" placeholder="Ex: Forno Elétrico 4 Bandejas" />
-    </div>
-    <button class="btn btn-primary" id="base-btn" onclick="salvarBase()">Cadastrar equipamento ✓</button>
+    <div id="base-tipo-list"></div>
   </div>
 </div>
 
-<!-- REGISTRAR ENTRADA -->
+<!-- NOVO MODELO -->
+<div class="screen" id="s-base-novo">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-base-tipo')">‹</button>
+    <div><div class="topbar-title">Novo Modelo</div><div class="topbar-sub" id="base-novo-sub"></div></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-label">Nome do modelo</div>
+      <input type="text" id="base-modelo-nome" placeholder="Ex: Forno Venâncio 4 Esteiras" />
+    </div>
+    <div class="card">
+      <div class="card-label">Observação (opcional)</div>
+      <input type="text" id="base-modelo-obs" placeholder="Ex: capacidade, tensão..." />
+    </div>
+    <button class="btn btn-primary" id="base-btn" onclick="salvarModelo()">Cadastrar modelo ✓</button>
+  </div>
+</div>
+
+<!-- REGISTRAR ENTRADA: SELECIONAR TIPO -->
 <div class="screen" id="s-entrada">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('s-home')">‹</button>
-    <div><div class="topbar-title">Registrar Entrada</div><div class="topbar-sub">Novo equipamento no estoque</div></div>
+    <div><div class="topbar-title">Registrar Entrada</div><div class="topbar-sub">Selecione o tipo</div></div>
+  </div>
+  <div class="content">
+    <div class="section-div">Tipo de equipamento</div>
+    <button class="home-btn" onclick="selecionarTipoEntrada('Forno')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🔥</div>
+      <div style="flex:1;"><div class="hb-title">Forno</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="selecionarTipoEntrada('Padeiro Noturno')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🌙</div>
+      <div style="flex:1;"><div class="hb-title">Padeiro Noturno</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="selecionarTipoEntrada('Esqueleto')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🦴</div>
+      <div style="flex:1;"><div class="hb-title">Esqueleto</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="selecionarTipoEntrada('Armário')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🚪</div>
+      <div style="flex:1;"><div class="hb-title">Armário</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+    <button class="home-btn" onclick="selecionarTipoEntrada('Freezer')">
+      <div class="hb-icon" style="background:rgba(233,69,96,0.12);">❄️</div>
+      <div style="flex:1;"><div class="hb-title">Freezer</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
+  </div>
+</div>
+
+<!-- REGISTRAR ENTRADA: FORMULÁRIO -->
+<div class="screen" id="s-entrada-form">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-entrada')">‹</button>
+    <div><div class="topbar-title">Registrar Entrada</div><div class="topbar-sub" id="entrada-tipo-sub"></div></div>
   </div>
   <div class="content">
     <div class="card">
-      <div class="card-label">Equipamento</div>
-      <div class="search-wrap" style="margin-bottom:8px;">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="entrada-srch" placeholder="Buscar por tipo ou patrimônio..." oninput="filtrarEntradaEquip()" />
+      <div class="card-label">Modelo</div>
+      <div id="entrada-modelos-list"></div>
+      <div id="entrada-modelo-sel" style="display:none;margin-top:8px;padding:10px;background:rgba(233,69,96,0.1);border-radius:10px;border:1px solid var(--accent);">
+        <div style="font-size:13px;font-weight:600;color:var(--accent);" id="entrada-modelo-sel-nome"></div>
       </div>
-      <div id="entrada-equip-list" style="max-height:200px;overflow-y:auto;"></div>
-      <div id="entrada-equip-sel" style="display:none;margin-top:8px;padding:10px;background:rgba(233,69,96,0.1);border-radius:10px;border:1px solid var(--accent);">
-        <div style="font-size:13px;font-weight:600;color:var(--accent);" id="entrada-equip-sel-nome"></div>
-        <div style="font-size:11px;color:var(--text-secondary);" id="entrada-equip-sel-pat"></div>
-      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Nº de Patrimônio</div>
+      <input type="text" id="entrada-patrimonio" placeholder="Ex: 0042" />
     </div>
     <div class="card">
       <div class="card-label">Data de entrada</div>
@@ -414,10 +469,12 @@ function goTo(id){
   if(el){el.classList.add('active');el.scrollTop=0;}
   if(id==='s-home') renderHome();
   if(id==='s-base') renderBase();
+  if(id==='s-base-tipo') renderBaseTipo();
+  if(id==='s-base-novo'){ document.getElementById('base-novo-sub').textContent=baseTipoAtivo; document.getElementById('base-modelo-nome').value=''; document.getElementById('base-modelo-obs').value=''; const b=document.getElementById('base-btn');if(b){b.textContent='Cadastrar modelo ✓';b.disabled=false;} }
   if(id==='s-estoque') renderEstoque();
   if(id==='s-historico') renderHistorico();
-  if(id==='s-entrada'){ equipSelecionadoEntrada=null; filtrarEntradaEquip(); document.getElementById('entrada-equip-sel').style.display='none'; document.getElementById('entrada-srch').value=''; document.getElementById('entrada-data').value=''; document.getElementById('entrada-nf').value=''; document.getElementById('entrada-problema').value=''; const b=document.getElementById('entrada-btn');if(b){b.textContent='Registrar entrada ✓';b.disabled=false;} }
-  if(id==='s-base-novo'){ document.getElementById('base-tipo').value=''; document.getElementById('base-patrimonio').value=''; document.getElementById('base-descricao').value=''; const b=document.getElementById('base-btn');if(b){b.textContent='Cadastrar equipamento ✓';b.disabled=false;} }
+  if(id==='s-entrada'){ entradaModeloSel=null; entradaTipoAtivo=''; }
+  if(id==='s-entrada-form') renderModelosEntrada();
   if(id==='s-pin'){ pinBuffer=''; updatePinDots(); document.getElementById('pin-err').textContent=''; }
 }
 
@@ -605,7 +662,7 @@ function renderEstoque(){
       <div class="equip-header">
         <div>
           <div class="equip-nome">${e.tipo}</div>
-          <div class="equip-patrimonio">Patrimônio: ${e.patrimonio}${e.descricao?' · '+e.descricao:''}</div>
+          <div class="equip-patrimonio">${e.modelo||''} · Patrimônio: ${e.patrimonio}</div>
         </div>
         <span class="badge badge-${e.status}">${e.status==='aguardando'?'⏳ Aguardando':e.status==='andamento'?'🔧 Andamento':'✅ Concluído'}</span>
       </div>
@@ -796,7 +853,7 @@ function renderHistorico(){
       <div class="equip-header">
         <div>
           <div class="equip-nome">${e.tipo}</div>
-          <div class="equip-patrimonio">Patrimônio: ${e.patrimonio}${e.descricao?' · '+e.descricao:''}</div>
+          <div class="equip-patrimonio">${e.modelo||''} · Patrimônio: ${e.patrimonio}</div>
         </div>
         <span class="badge badge-${e.status}">${badgeMap[e.status]}</span>
       </div>
@@ -816,10 +873,13 @@ window.goTo=goTo;
 window.pinDigit=pinDigit;
 window.pinDel=pinDel;
 window.renderBase=renderBase;
-window.salvarBase=salvarBase;
-window.excluirBase=excluirBase;
-window.filtrarEntradaEquip=filtrarEntradaEquip;
-window.selecionarEquipEntrada=selecionarEquipEntrada;
+window.abrirBaseTipo=abrirBaseTipo;
+window.renderBaseTipo=renderBaseTipo;
+window.salvarModelo=salvarModelo;
+window.excluirModelo=excluirModelo;
+window.selecionarTipoEntrada=selecionarTipoEntrada;
+window.renderModelosEntrada=renderModelosEntrada;
+window.selecionarModeloEntrada=selecionarModeloEntrada;
 window.salvarEntrada=salvarEntrada;
 window.setFiltro=setFiltro;
 window.renderEstoque=renderEstoque;
