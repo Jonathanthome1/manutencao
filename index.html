@@ -237,6 +237,13 @@
       <div style="flex:1;"><div class="hb-title">Histórico</div><div class="hb-desc">Todos os equipamentos por status</div></div>
       <span style="color:var(--text-secondary);font-size:20px;">›</span>
     </button>
+
+    <div class="section-div" style="margin-top:14px;">Equipe</div>
+    <button class="home-btn" onclick="goTo('s-presenca-reg')">
+      <div class="hb-icon" style="background:rgba(139,92,246,0.15);">👥</div>
+      <div style="flex:1;"><div class="hb-title">Registro de Presença</div><div class="hb-desc" id="presenca-home-desc">Controle diário da equipe</div></div>
+      <span style="color:var(--text-secondary);font-size:20px;">›</span>
+    </button>
   </div>
 </div>
 
@@ -388,11 +395,21 @@
       <span class="search-icon">🔍</span>
       <input type="text" id="estoque-srch" placeholder="Buscar equipamento..." oninput="renderEstoque()" />
     </div>
+    <div style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Status</div>
     <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
       <button class="btn-sm" id="filtro-todos" onclick="setFiltro('todos')" style="background:var(--accent);color:white;white-space:nowrap;">Todos</button>
       <button class="btn-sm" id="filtro-aguardando" onclick="setFiltro('aguardando')" style="background:rgba(107,114,128,0.2);color:var(--cinza);white-space:nowrap;">⏳ Aguardando</button>
       <button class="btn-sm" id="filtro-andamento" onclick="setFiltro('andamento')" style="background:rgba(245,158,11,0.2);color:var(--amarelo);white-space:nowrap;">🔧 Andamento</button>
       <button class="btn-sm" id="filtro-concluido" onclick="setFiltro('concluido')" style="background:rgba(16,185,129,0.2);color:var(--verde);white-space:nowrap;">✅ Concluído</button>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Tipo</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
+      <button class="btn-sm" id="ftipo-todos" onclick="setFiltroTipo('todos')" style="background:var(--accent);color:white;white-space:nowrap;">Todos</button>
+      <button class="btn-sm" id="ftipo-Forno" onclick="setFiltroTipo('Forno')" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border);white-space:nowrap;">🔥 Forno</button>
+      <button class="btn-sm" id="ftipo-Padeiro-Noturno" onclick="setFiltroTipo('Padeiro Noturno')" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border);white-space:nowrap;">🌙 Padeiro</button>
+      <button class="btn-sm" id="ftipo-Esqueleto" onclick="setFiltroTipo('Esqueleto')" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border);white-space:nowrap;">🦴 Esqueleto</button>
+      <button class="btn-sm" id="ftipo-Armario" onclick="setFiltroTipo('Armário')" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border);white-space:nowrap;">🚪 Armário</button>
+      <button class="btn-sm" id="ftipo-Freezer" onclick="setFiltroTipo('Freezer')" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border);white-space:nowrap;">❄️ Freezer</button>
     </div>
     <div id="estoque-list"></div>
   </div>
@@ -407,6 +424,51 @@
   <div class="content" id="detalhe-content"></div>
 </div>
 
+
+<!-- PRESENÇA REGISTROS -->
+<div class="screen" id="s-presenca-reg">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-home')">‹</button>
+    <div style="flex:1;"><div class="topbar-title">Registros de Presença</div><div class="topbar-sub" id="presenca-reg-sub"></div></div>
+    <button class="topbar-right" onclick="goTo('s-presenca-form')">+ Novo</button>
+  </div>
+  <div class="content" id="presenca-reg-content"></div>
+</div>
+
+<!-- PRESENÇA FORM -->
+<div class="screen" id="s-presenca-form">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('s-presenca-reg')">‹</button>
+    <div><div class="topbar-title">Registro de Presença</div><div class="topbar-sub" id="presenca-form-sub"></div></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-label">Data</div>
+      <input type="date" id="pres-data" />
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="card-label">Escalados</div>
+          <input type="number" id="pres-escalados" placeholder="0" min="0" inputmode="numeric" />
+        </div>
+        <div>
+          <div class="card-label">Presentes</div>
+          <input type="number" id="pres-presentes" placeholder="0" min="0" inputmode="numeric" />
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="card-label" style="margin:0;">Ocorrências (faltas / saídas)</div>
+        <button onclick="addOcorrencia()" style="background:var(--accent);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">+ Adicionar</button>
+      </div>
+      <div id="pres-ocorrencias-list"></div>
+    </div>
+    <button class="btn btn-primary" id="pres-btn" onclick="salvarPresenca()">Salvar registro ✓</button>
+  </div>
+</div>
+
 <!-- HISTÓRICO -->
 <div class="screen" id="s-historico">
   <div class="topbar">
@@ -417,6 +479,28 @@
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input type="text" id="hist-srch" placeholder="Buscar..." oninput="renderHistorico()" />
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Status</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
+      <button class="btn-sm" id="hf-todos" onclick="setFiltroHist('todos')" style="background:var(--accent);color:white;white-space:nowrap;">Todos</button>
+      <button class="btn-sm" id="hf-aguardando" onclick="setFiltroHist('aguardando')" style="background:rgba(107,114,128,0.2);color:var(--cinza);white-space:nowrap;">⏳ Aguardando</button>
+      <button class="btn-sm" id="hf-andamento" onclick="setFiltroHist('andamento')" style="background:rgba(245,158,11,0.2);color:var(--amarelo);white-space:nowrap;">🔧 Andamento</button>
+      <button class="btn-sm" id="hf-concluido" onclick="setFiltroHist('concluido')" style="background:rgba(16,185,129,0.2);color:var(--verde);white-space:nowrap;">✅ Concluído</button>
+      <button class="btn-sm" id="hf-saiu" onclick="setFiltroHist('saiu')" style="background:rgba(59,130,246,0.2);color:var(--azul);white-space:nowrap;">🚚 Saiu</button>
+    </div>
+    <div class="card" style="margin-bottom:12px;padding:12px;">
+      <div class="card-label">Filtrar por período (data de entrada)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">De</div>
+          <input type="date" id="hist-data-de" oninput="renderHistorico()" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Até</div>
+          <input type="date" id="hist-data-ate" oninput="renderHistorico()" />
+        </div>
+      </div>
+      <button onclick="limparFiltroDataHist()" style="width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-secondary);border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;">Limpar período</button>
     </div>
     <div id="hist-list"></div>
   </div>
@@ -695,7 +779,8 @@ function renderEstoque(){
   const q=(document.getElementById('estoque-srch')?.value||'').toLowerCase();
   let lista=equipamentosEstoque.filter(e=>e.status!=='saiu');
   if(filtroAtivo!=='todos')lista=lista.filter(e=>e.status===filtroAtivo);
-  if(q)lista=lista.filter(e=>(e.tipo+' '+e.patrimonio+' '+(e.descricao||'')).toLowerCase().includes(q));
+  if(filtroTipoAtivo!=='todos')lista=lista.filter(e=>e.tipo===filtroTipoAtivo);
+  if(q)lista=lista.filter(e=>(e.tipo+' '+e.patrimonio+' '+(e.modelo||'')).toLowerCase().includes(q));
   document.getElementById('estoque-sub').textContent=lista.length+' equipamento(s)';
   if(!lista.length){el.innerHTML='<div class="empty">Nenhum equipamento encontrado.</div>';return;}
   const corStatus={aguardando:'var(--cinza)',andamento:'var(--amarelo)',concluido:'var(--verde)'};
@@ -898,7 +983,20 @@ function renderHistorico(){
   if(!el)return;
   const q=(document.getElementById('hist-srch')?.value||'').toLowerCase();
   let lista=[...equipamentosEstoque];
-  if(q)lista=lista.filter(e=>(e.tipo+' '+e.patrimonio+' '+(e.descricao||'')+' '+(e.nfEntrada||'')+' '+(e.nfSaida||'')).toLowerCase().includes(q));
+  // Filter by status
+  if(filtroHistStatus!=='todos')lista=lista.filter(function(e){return e.status===filtroHistStatus;});
+  // Filter by date range
+  const dDe=document.getElementById('hist-data-de')?.value;
+  const dAte=document.getElementById('hist-data-ate')?.value;
+  if(dDe||dAte){
+    const tsDe=dDe?new Date(dDe).getTime():0;
+    const tsAte=dAte?new Date(dAte+'T23:59:59').getTime():Number.MAX_SAFE_INTEGER;
+    lista=lista.filter(function(e){
+      const ts=dataParaTimestamp(e.dataEntrada);
+      return ts>=tsDe&&ts<=tsAte;
+    });
+  }
+  if(q)lista=lista.filter(e=>(e.tipo+' '+e.patrimonio+' '+(e.modelo||'')+' '+(e.nfEntrada||'')+' '+(e.nfSaida||'')).toLowerCase().includes(q));
   document.getElementById('hist-sub').textContent=lista.length+' registro(s)';
   if(!lista.length){el.innerHTML='<div class="empty">Nenhum registro encontrado.</div>';return;}
   const badgeMap={aguardando:'⏳ Aguardando',andamento:'🔧 Andamento',concluido:'✅ Concluído',saiu:'🚚 Saiu'};
@@ -914,6 +1012,219 @@ function renderHistorico(){
       <div class="equip-data">Entrada: ${e.dataEntrada} · NF: ${e.nfEntrada}${e.nfSaida?' | Saída NF: '+e.nfSaida:''}</div>
       ${e.servicos&&e.servicos.length?'<div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">🔧 '+e.servicos.join(', ')+'</div>':''}
     </div>`).join('');
+}
+
+
+// ===== FILTRO TIPO (estoque) =====
+let filtroTipoAtivo = 'todos';
+function setFiltroTipo(tipo){
+  filtroTipoAtivo=tipo;
+  const TIPOS=['todos','Forno','Padeiro Noturno','Esqueleto','Armário','Freezer'];
+  TIPOS.forEach(function(t){
+    const safeId=t.replace(/ /g,'-').replace(/[áàãâä]/g,'a').replace(/[éèêë]/g,'e').replace(/[íìîï]/g,'i').replace(/[óòõôö]/g,'o').replace(/[úùûü]/g,'u');
+    const btn=document.getElementById('ftipo-'+safeId);
+    if(!btn)return;
+    if(t===tipo){
+      btn.style.background='var(--accent)';
+      btn.style.color='white';
+      btn.style.border='none';
+    } else {
+      btn.style.background='rgba(255,255,255,0.05)';
+      btn.style.color='var(--text-secondary)';
+      btn.style.border='1px solid var(--border)';
+    }
+  });
+  renderEstoque();
+}
+
+// ===== FILTRO HISTÓRICO =====
+let filtroHistStatus = 'todos';
+function setFiltroHist(s){
+  filtroHistStatus=s;
+  ['todos','aguardando','andamento','concluido','saiu'].forEach(function(x){
+    const btn=document.getElementById('hf-'+x);
+    if(!btn)return;
+    const cores={todos:'var(--accent)',aguardando:'var(--cinza)',andamento:'var(--amarelo)',concluido:'var(--verde)',saiu:'var(--azul)'};
+    const bgs={todos:'rgba(233,69,96,0.15)',aguardando:'rgba(107,114,128,0.15)',andamento:'rgba(245,158,11,0.15)',concluido:'rgba(16,185,129,0.15)',saiu:'rgba(59,130,246,0.15)'};
+    if(x===s){btn.style.background=bgs[x];btn.style.color=cores[x];btn.style.border='1px solid '+cores[x];}
+    else{btn.style.background='rgba(255,255,255,0.05)';btn.style.color='var(--text-secondary)';btn.style.border='1px solid var(--border)';}
+  });
+  renderHistorico();
+}
+
+function limparFiltroDataHist(){
+  document.getElementById('hist-data-de').value='';
+  document.getElementById('hist-data-ate').value='';
+  renderHistorico();
+}
+
+function dataParaTimestamp(dataStr){
+  // dd/mm/yyyy → timestamp
+  if(!dataStr)return 0;
+  const parts=dataStr.split('/');
+  if(parts.length!==3)return 0;
+  return new Date(parts[2]+'-'+parts[1]+'-'+parts[0]).getTime();
+}
+
+// ===== PRESENÇA =====
+let presencas = [];
+let presencaOcorrencias = [];
+let _presencaEditId = null;
+
+onSnapshot(collection(db,'presencas'), function(snap){
+  presencas=snap.docs.map(function(d){return Object.assign({firestoreId:d.id},d.data());}).sort(function(a,b){return (b.timestamp||0)-(a.timestamp||0);});
+  const tela=document.querySelector('.screen.active') ? document.querySelector('.screen.active').id : '';
+  if(tela==='s-presenca-reg') renderPresencaReg();
+  // Update home badge
+  const hojeStr=isoToDisplay(new Date().toISOString().slice(0,10));
+  const recHoje=presencas.find(function(p){return p.data===hojeStr;});
+  const desc=document.getElementById('presenca-home-desc');
+  if(desc) desc.textContent=recHoje?('Hoje: '+recHoje.presentes+'/'+recHoje.escalados+' presentes'):'Controle diário da equipe';
+});
+
+function renderPresencaReg(){
+  const el=document.getElementById('presenca-reg-content');
+  const sub=document.getElementById('presenca-reg-sub');
+  if(!el)return;
+  if(sub)sub.textContent=presencas.length+' registro(s)';
+  if(!presencas.length){
+    el.innerHTML='<div class="empty">Nenhum registro de presença ainda.<br>Use o botão + Novo no topo para adicionar.</div>';
+    return;
+  }
+  // Group by date
+  const porData={};
+  presencas.forEach(function(p){if(!porData[p.data])porData[p.data]=[];porData[p.data].push(p);});
+  const datasOrd=Object.keys(porData).sort(function(a,b){return dataParaTimestamp(b)-dataParaTimestamp(a);});
+  let html='';
+  datasOrd.forEach(function(data){
+    const regs=porData[data];
+    const dayId='pres-day-'+data.replace(/\//g,'-');
+    html+='<div style="margin-bottom:4px;">'+
+      '<button data-did="'+dayId+'" onclick="togglePresDay(this.dataset.did)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:var(--bg-secondary);border:0.5px solid var(--border);border-left:3px solid var(--roxo);border-radius:12px;cursor:pointer;font-family:inherit;text-align:left;">'+
+      '<div><div style="font-size:14px;font-weight:600;color:var(--roxo);">'+data+'</div>'+
+      '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">'+regs.length+' registro(s)</div></div>'+
+      '<span id="'+dayId+'-arr" style="color:var(--roxo);font-size:18px;">▼</span></button>'+
+      '<div id="'+dayId+'" style="display:none;padding-left:8px;margin-top:6px;">';
+    regs.forEach(function(r){
+      const faltas=(r.ocorrencias||[]).filter(function(o){return o.status==='Faltou';}).length;
+      const saidas=(r.ocorrencias||[]).filter(function(o){return o.status==='Saiu mais cedo';}).length;
+      html+='<div style="background:var(--bg-secondary);border-radius:10px;padding:10px 12px;margin-bottom:6px;border-left:3px solid var(--roxo);">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'+
+        '<span style="font-size:13px;color:var(--text-primary);">👥 <strong>'+r.presentes+'/'+r.escalados+'</strong> presentes</span>'+
+        '<div style="display:flex;gap:6px;">'+
+        '<button data-fid="'+r.firestoreId+'" onclick="editarPresenca(this.dataset.fid)" style="background:none;border:1px solid var(--accent);color:var(--accent);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit;">✏️</button>'+
+        '<button data-fid="'+r.firestoreId+'" onclick="excluirPresenca(this.dataset.fid)" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit;">🗑</button>'+
+        '</div></div>';
+      if(faltas>0||saidas>0){
+        html+='<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">';
+        if(faltas>0)html+='<span style="color:#c62828;">❌ '+faltas+' falta(s)</span> ';
+        if(saidas>0)html+='<span style="color:var(--laranja);">🕐 '+saidas+' saída(s)</span>';
+        html+='</div>';
+      }
+      if(r.ocorrencias&&r.ocorrencias.length>0){
+        html+='<div style="margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border);">';
+        r.ocorrencias.forEach(function(o){
+          html+='<div style="font-size:12px;color:var(--text-primary);padding:2px 0;"><strong>'+o.nome+'</strong> — '+o.status+(o.obs?' · '+o.obs:'')+'</div>';
+        });
+        html+='</div>';
+      }
+      html+='<div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Registrado às '+r.hora+'</div>'+
+        '</div>';
+    });
+    html+='</div></div>';
+  });
+  el.innerHTML=html;
+}
+
+function togglePresDay(id){
+  const el=document.getElementById(id);
+  const arr=document.getElementById(id+'-arr');
+  if(!el)return;
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  if(arr)arr.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+}
+
+function addOcorrencia(){
+  presencaOcorrencias.push({nome:'',status:'Faltou',obs:''});
+  renderOcorrencias();
+}
+
+function removerOcorrencia(idx){
+  presencaOcorrencias.splice(idx,1);
+  renderOcorrencias();
+}
+
+function atualizarOcorrencia(idx,campo,val){
+  if(presencaOcorrencias[idx]) presencaOcorrencias[idx][campo]=val;
+}
+
+function renderOcorrencias(){
+  const el=document.getElementById('pres-ocorrencias-list');
+  if(!el)return;
+  if(!presencaOcorrencias.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text-secondary);text-align:center;padding:8px 0;">Nenhuma ocorrência</div>';
+    return;
+  }
+  el.innerHTML=presencaOcorrencias.map(function(o,i){
+    return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;margin-bottom:8px;">'+
+      '<div style="display:flex;gap:6px;margin-bottom:6px;">'+
+      '<input type="text" placeholder="Nome" value="'+(o.nome||'')+'" oninput="atualizarOcorrencia('+i+',\'nome\',this.value)" style="flex:1;padding:8px;font-size:13px;" />'+
+      '<button onclick="removerOcorrencia('+i+')" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:12px;padding:0 10px;border-radius:8px;cursor:pointer;font-family:inherit;">×</button>'+
+      '</div>'+
+      '<select onchange="atualizarOcorrencia('+i+',\'status\',this.value)" style="margin-bottom:6px;font-size:13px;">'+
+      '<option '+(o.status==='Faltou'?'selected':'')+'>Faltou</option>'+
+      '<option '+(o.status==='Saiu mais cedo'?'selected':'')+'>Saiu mais cedo</option>'+
+      '</select>'+
+      '<input type="text" placeholder="Observação (opcional)" value="'+(o.obs||'')+'" oninput="atualizarOcorrencia('+i+',\'obs\',this.value)" style="font-size:13px;" />'+
+      '</div>';
+  }).join('');
+}
+
+async function salvarPresenca(){
+  const dataRaw=document.getElementById('pres-data').value;
+  const escalados=parseInt(document.getElementById('pres-escalados').value)||0;
+  const presentes=parseInt(document.getElementById('pres-presentes').value)||0;
+  if(!dataRaw){alert('Informe a data.');return;}
+  if(escalados<=0){alert('Informe a quantidade de escalados.');return;}
+  // Filter empty ocorrencias
+  const ocorrencias=presencaOcorrencias.filter(function(o){return o.nome&&o.nome.trim();});
+  const data=isoToDisplay(dataRaw);
+  const btn=document.getElementById('pres-btn');
+  btn.textContent='Salvando...';btn.disabled=true;
+  try{
+    const payload={data:data,escalados:escalados,presentes:presentes,ocorrencias:ocorrencias,hora:agora(),timestamp:Date.now()};
+    if(_presencaEditId){
+      await updateDoc(doc(db,'presencas',_presencaEditId),payload);
+      _presencaEditId=null;
+    } else {
+      await addDoc(collection(db,'presencas'),payload);
+    }
+    presencaOcorrencias=[];
+    goTo('s-presenca-reg');
+  }catch(e){alert('Erro: '+e.message);btn.textContent='Salvar registro ✓';btn.disabled=false;}
+}
+
+function editarPresenca(fid){
+  const r=presencas.find(function(p){return p.firestoreId===fid;});
+  if(!r)return;
+  _presencaEditId=fid;
+  goTo('s-presenca-form');
+  // Populate after navigation
+  setTimeout(function(){
+    const parts=r.data.split('/');
+    document.getElementById('pres-data').value=parts[2]+'-'+parts[1]+'-'+parts[0];
+    document.getElementById('pres-escalados').value=r.escalados;
+    document.getElementById('pres-presentes').value=r.presentes;
+    presencaOcorrencias=JSON.parse(JSON.stringify(r.ocorrencias||[]));
+    renderOcorrencias();
+    document.getElementById('presenca-form-sub').textContent='Editando registro de '+r.data;
+  },50);
+}
+
+async function excluirPresenca(fid){
+  if(!confirm('Excluir este registro de presença?'))return;
+  try{await deleteDoc(doc(db,'presencas',fid));}catch(e){alert('Erro: '+e.message);}
 }
 
 // ===== INIT =====
@@ -944,6 +1255,18 @@ window.alterarStatus=alterarStatus;
 window.registrarSaida=registrarSaida;
 window.excluirEstoque=excluirEstoque;
 window.renderHistorico=renderHistorico;
+window.setFiltroTipo=setFiltroTipo;
+window.setFiltroHist=setFiltroHist;
+window.limparFiltroDataHist=limparFiltroDataHist;
+window.renderPresencaReg=renderPresencaReg;
+window.togglePresDay=togglePresDay;
+window.addOcorrencia=addOcorrencia;
+window.removerOcorrencia=removerOcorrencia;
+window.atualizarOcorrencia=atualizarOcorrencia;
+window.renderOcorrencias=renderOcorrencias;
+window.salvarPresenca=salvarPresenca;
+window.editarPresenca=editarPresenca;
+window.excluirPresenca=excluirPresenca;
 
 </script>
 </body>
