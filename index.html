@@ -265,7 +265,7 @@
     </button>
     <button class="home-btn" onclick="abrirBaseTipo('Armário')">
       <div class="hb-icon" style="background:rgba(233,69,96,0.12);">🚪</div>
-      <div style="flex:1;"><div class="hb-title">Armário</div><div class="hb-desc" id="base-badge-Armário">Carregando...</div></div>
+      <div style="flex:1;"><div class="hb-title">Armário</div><div class="hb-desc" id="base-badge-Armrio">Carregando...</div></div>
       <span style="color:var(--text-secondary);font-size:20px;">›</span>
     </button>
     <button class="home-btn" onclick="abrirBaseTipo('Freezer')">
@@ -532,79 +532,122 @@ function renderHome(){
 }
 
 // ===== BASE =====
+let baseTipoAtivo = '';
+
+function normalizeId(s){ return s.replace(/ /g,'-').replace(/[^a-zA-Z0-9-]/g,''); }
+
 function renderBase(){
-  const el=document.getElementById('base-list');
-  if(!el)return;
-  const q=(document.getElementById('base-srch')?.value||'').toLowerCase();
-  const filtrado=q?equipamentosBase.filter(e=>(e.tipo+' '+e.patrimonio+' '+(e.descricao||'')).toLowerCase().includes(q)):equipamentosBase;
-  document.getElementById('base-sub').textContent=equipamentosBase.length+' equipamento(s) cadastrado(s)';
-  if(!filtrado.length){el.innerHTML='<div class="empty">Nenhum equipamento cadastrado ainda.</div>';return;}
-  el.innerHTML=filtrado.map(e=>`
-    <div style="background:var(--bg-secondary);border-radius:12px;padding:12px 14px;margin-bottom:8px;border:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${e.tipo}</div>
-        <div style="font-size:12px;color:var(--text-secondary);">Patrimônio: <strong>${e.patrimonio}</strong>${e.descricao?' · '+e.descricao:''}</div>
-      </div>
-      <button data-fid="${e.firestoreId}" onclick="excluirBase(this.dataset.fid)" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:inherit;">🗑</button>
-    </div>`).join('');
+  const TIPOS=['Forno','Padeiro Noturno','Esqueleto','Armário','Freezer'];
+  TIPOS.forEach(function(t){
+    const safeId=t.replace(/ /g,'-').replace(/[áàãâä]/g,'a').replace(/[éèêë]/g,'e').replace(/[íìîï]/g,'i').replace(/[óòõôö]/g,'o').replace(/[úùûü]/g,'u');
+    const el=document.getElementById('base-badge-'+safeId);
+    if(!el)return;
+    const count=equipamentosBase.filter(function(m){return m.tipo===t;}).length;
+    el.textContent=count+' modelo(s) cadastrado(s)';
+  });
 }
 
-async function salvarBase(){
-  const tipo=document.getElementById('base-tipo').value;
-  const patrimonio=document.getElementById('base-patrimonio').value.trim();
-  const descricao=document.getElementById('base-descricao').value.trim();
-  if(!tipo){alert('Selecione o tipo de equipamento.');return;}
-  if(!patrimonio){alert('Informe o número de patrimônio.');return;}
-  // Check duplicate
-  if(equipamentosBase.find(e=>e.patrimonio===patrimonio)){alert('Patrimônio '+patrimonio+' já cadastrado.');return;}
+function abrirBaseTipo(tipo){
+  baseTipoAtivo=tipo;
+  document.getElementById('base-tipo-title').textContent=tipo;
+  document.getElementById('base-novo-sub').textContent=tipo;
+  renderBaseTipo();
+  goTo('s-base-tipo');
+}
+
+function renderBaseTipo(){
+  const el=document.getElementById('base-tipo-list');
+  if(!el)return;
+  const modelos=equipamentosBase.filter(function(m){return m.tipo===baseTipoAtivo;});
+  document.getElementById('base-tipo-sub').textContent=modelos.length+' modelo(s)';
+  if(!modelos.length){
+    el.innerHTML='<div class="empty">Nenhum modelo cadastrado ainda.<br>Use o botão + Modelo no topo para adicionar.</div>';
+    return;
+  }
+  el.innerHTML=modelos.map(function(m){
+    return '<div style="background:var(--bg-secondary);border-radius:12px;padding:12px 14px;margin-bottom:8px;border:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'+
+      '<div><div style="font-size:14px;font-weight:600;color:var(--text-primary);">'+m.nome+'</div>'+
+      (m.obs?'<div style="font-size:12px;color:var(--text-secondary);">'+m.obs+'</div>':'')+
+      '</div>'+
+      '<button data-fid="'+m.firestoreId+'" onclick="excluirModelo(this.dataset.fid)" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:inherit;">🗑</button>'+
+      '</div>';
+  }).join('');
+}
+
+async function salvarModelo(){
+  const nome=document.getElementById('base-modelo-nome').value.trim();
+  const obs=document.getElementById('base-modelo-obs').value.trim();
+  if(!nome){alert('Informe o nome do modelo.');return;}
+  const dup=equipamentosBase.find(function(m){return m.tipo===baseTipoAtivo&&m.nome.toLowerCase()===nome.toLowerCase();});
+  if(dup){alert('Modelo "'+nome+'" já cadastrado para '+baseTipoAtivo+'.');return;}
   const btn=document.getElementById('base-btn');
   btn.textContent='Salvando...';btn.disabled=true;
   try{
-    await addDoc(collection(db,'equipamentosBase'),{tipo,patrimonio,descricao,timestamp:Date.now(),hora:agora()});
-    goTo('s-base');
-  }catch(e){alert('Erro: '+e.message);btn.textContent='Cadastrar equipamento ✓';btn.disabled=false;}
+    await addDoc(collection(db,'equipamentosBase'),{tipo:baseTipoAtivo,nome:nome,obs:obs,timestamp:Date.now()});
+    document.getElementById('base-modelo-nome').value='';
+    document.getElementById('base-modelo-obs').value='';
+    btn.textContent='Cadastrar modelo ✓';btn.disabled=false;
+    goTo('s-base-tipo');
+  }catch(e){alert('Erro: '+e.message);btn.textContent='Cadastrar modelo ✓';btn.disabled=false;}
 }
 
-async function excluirBase(fid){
-  if(!confirm('Excluir este equipamento da base?\nEssa ação não pode ser desfeita.'))return;
+async function excluirModelo(fid){
+  if(!confirm('Excluir este modelo?'))return;
   try{await deleteDoc(doc(db,'equipamentosBase',fid));}catch(e){alert('Erro: '+e.message);}
 }
 
 // ===== ENTRADA =====
-function filtrarEntradaEquip(){
-  const q=(document.getElementById('entrada-srch')?.value||'').toLowerCase();
-  const el=document.getElementById('entrada-equip-list');
-  if(!el)return;
-  const disponiveis=equipamentosBase.filter(e=>{
-    // Already in estoque with status != saiu? exclude
-    const noEstoque=equipamentosEstoque.find(est=>est.baseId===e.firestoreId&&est.status!=='saiu');
-    return !noEstoque;
-  });
-  const filtrado=q?disponiveis.filter(e=>(e.tipo+' '+e.patrimonio).toLowerCase().includes(q)):disponiveis;
-  if(!filtrado.length){el.innerHTML='<div style="font-size:13px;color:var(--text-secondary);padding:8px 0;">'+(disponiveis.length?'Nenhum resultado.':'Todos os equipamentos já estão no estoque.')+'</div>';return;}
-  el.innerHTML=filtrado.slice(0,10).map(e=>`
-    <div onclick="selecionarEquipEntrada('${e.firestoreId}')" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;background:rgba(255,255,255,0.03);">
-      <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${e.tipo}</div>
-      <div style="font-size:12px;color:var(--text-secondary);">Patrimônio: ${e.patrimonio}${e.descricao?' · '+e.descricao:''}</div>
-    </div>`).join('');
+let entradaTipoAtivo = '';
+let entradaModeloSel = null;
+
+function selecionarTipoEntrada(tipo){
+  entradaTipoAtivo=tipo;
+  entradaModeloSel=null;
+  document.getElementById('entrada-tipo-sub').textContent=tipo;
+  document.getElementById('entrada-modelo-sel').style.display='none';
+  document.getElementById('entrada-patrimonio').value='';
+  document.getElementById('entrada-data').value='';
+  document.getElementById('entrada-nf').value='';
+  document.getElementById('entrada-problema').value='';
+  const btn=document.getElementById('entrada-btn');
+  if(btn){btn.textContent='Registrar entrada ✓';btn.disabled=false;}
+  renderModelosEntrada();
+  goTo('s-entrada-form');
 }
 
-function selecionarEquipEntrada(fid){
-  const e=equipamentosBase.find(x=>x.firestoreId===fid);
-  if(!e)return;
-  equipSelecionadoEntrada=e;
-  document.getElementById('entrada-equip-list').innerHTML='';
-  document.getElementById('entrada-srch').value='';
-  document.getElementById('entrada-equip-sel').style.display='block';
-  document.getElementById('entrada-equip-sel-nome').textContent=e.tipo+(e.descricao?' — '+e.descricao:'');
-  document.getElementById('entrada-equip-sel-pat').textContent='Patrimônio: '+e.patrimonio;
+function renderModelosEntrada(){
+  const el=document.getElementById('entrada-modelos-list');
+  if(!el)return;
+  const modelos=equipamentosBase.filter(function(m){return m.tipo===entradaTipoAtivo;});
+  if(!modelos.length){
+    el.innerHTML='<div style="font-size:13px;color:var(--text-secondary);padding:8px 0;">Nenhum modelo cadastrado para '+entradaTipoAtivo+'. Cadastre primeiro na Base de Equipamentos.</div>';
+    return;
+  }
+  el.innerHTML=modelos.map(function(m){
+    const sel=entradaModeloSel&&entradaModeloSel.firestoreId===m.firestoreId;
+    return '<div data-fid="'+m.firestoreId+'" onclick="selecionarModeloEntrada(this.dataset.fid)" style="padding:10px 12px;border-radius:10px;border:1px solid '+(sel?'var(--accent)':'var(--border)')+';background:'+(sel?'rgba(233,69,96,0.1)':'rgba(255,255,255,0.03)')+';margin-bottom:6px;cursor:pointer;">'+
+      '<div style="font-size:14px;font-weight:600;color:'+(sel?'var(--accent)':'var(--text-primary)')+';">'+m.nome+'</div>'+
+      (m.obs?'<div style="font-size:12px;color:var(--text-secondary);">'+m.obs+'</div>':'')+
+      '</div>';
+  }).join('');
+}
+
+function selecionarModeloEntrada(fid){
+  entradaModeloSel=equipamentosBase.find(function(m){return m.firestoreId===fid;});
+  renderModelosEntrada();
+  if(entradaModeloSel){
+    document.getElementById('entrada-modelo-sel').style.display='block';
+    document.getElementById('entrada-modelo-sel-nome').textContent='✓ '+entradaModeloSel.nome;
+  }
 }
 
 async function salvarEntrada(){
-  if(!equipSelecionadoEntrada){alert('Selecione um equipamento.');return;}
+  if(!entradaModeloSel){alert('Selecione um modelo.');return;}
+  const patrimonio=document.getElementById('entrada-patrimonio').value.trim();
   const dataRaw=document.getElementById('entrada-data').value;
   const nf=document.getElementById('entrada-nf').value.trim();
   const problema=document.getElementById('entrada-problema').value.trim();
+  if(!patrimonio){alert('Informe o número de patrimônio.');return;}
   if(!dataRaw){alert('Informe a data de entrada.');return;}
   if(!nf){alert('Informe o número da NF de entrada.');return;}
   if(!problema){alert('Descreva o problema identificado.');return;}
@@ -612,20 +655,19 @@ async function salvarEntrada(){
   btn.textContent='Salvando...';btn.disabled=true;
   try{
     await addDoc(collection(db,'equipamentosEstoque'),{
-      baseId:equipSelecionadoEntrada.firestoreId,
-      tipo:equipSelecionadoEntrada.tipo,
-      patrimonio:equipSelecionadoEntrada.patrimonio,
-      descricao:equipSelecionadoEntrada.descricao||'',
+      tipo:entradaTipoAtivo,
+      modelo:entradaModeloSel.nome,
+      patrimonio:patrimonio,
       dataEntrada:isoToDisplay(dataRaw),
       nfEntrada:nf,
-      problema,
+      problema:problema,
       status:'aguardando',
       servicos:[],
       obsServico:'',
       dataConclusao:null,
       dataSaida:null,
       nfSaida:null,
-      historico:[{acao:'Entrada registrada',data:isoToDisplay(dataRaw),hora:agora(),obs:'NF: '+nf+' · '+problema}],
+      historico:[{acao:'Entrada registrada',data:isoToDisplay(dataRaw),hora:agora(),obs:'NF: '+nf+' · Patrimônio: '+patrimonio}],
       timestamp:Date.now(),
       hora:agora()
     });
