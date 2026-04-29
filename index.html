@@ -558,7 +558,25 @@ function goTo(id){
   if(id==='s-estoque') renderEstoque();
   if(id==='s-historico') renderHistorico();
   if(id==='s-entrada'){ entradaModeloSel=null; entradaTipoAtivo=''; }
-  if(id==='s-entrada-form') renderModelosEntrada();
+  if(id==='s-entrada-form'){
+    renderModelosEntrada();
+    const dEl=document.getElementById('entrada-data');
+    if(dEl&&!dEl.value)dEl.value=new Date().toISOString().slice(0,10);
+  }
+  if(id==='s-presenca-reg') renderPresencaReg();
+  if(id==='s-presenca-form'){
+    if(!_presencaEditId){
+      const dEl=document.getElementById('pres-data');
+      if(dEl)dEl.value=new Date().toISOString().slice(0,10);
+      document.getElementById('pres-escalados').value='';
+      document.getElementById('pres-presentes').value='';
+      presencaOcorrencias=[];
+      document.getElementById('presenca-form-sub').textContent='Novo registro';
+    }
+    renderOcorrencias();
+    const b=document.getElementById('pres-btn');
+    if(b){b.textContent='Salvar registro ✓';b.disabled=false;}
+  }
   if(id==='s-pin'){ pinBuffer=''; updatePinDots(); document.getElementById('pin-err').textContent=''; }
 }
 
