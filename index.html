@@ -1151,12 +1151,13 @@ function addOcorrencia(){
 }
 
 function removerOcorrencia(idx){
-  presencaOcorrencias.splice(idx,1);
+  presencaOcorrencias.splice(parseInt(idx),1);
   renderOcorrencias();
 }
 
 function atualizarOcorrencia(idx,campo,val){
-  if(presencaOcorrencias[idx]) presencaOcorrencias[idx][campo]=val;
+  const i=parseInt(idx);
+  if(presencaOcorrencias[i]) presencaOcorrencias[i][campo]=val;
 }
 
 function renderOcorrencias(){
@@ -1166,19 +1167,21 @@ function renderOcorrencias(){
     el.innerHTML='<div style="font-size:12px;color:var(--text-secondary);text-align:center;padding:8px 0;">Nenhuma ocorrência</div>';
     return;
   }
-  el.innerHTML=presencaOcorrencias.map(function(o,i){
-    return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;margin-bottom:8px;">'+
-      '<div style="display:flex;gap:6px;margin-bottom:6px;">'+
-      '<input type="text" placeholder="Nome" value="'+(o.nome||'')+'" oninput="atualizarOcorrencia('+i+',\'nome\',this.value)" style="flex:1;padding:8px;font-size:13px;" />'+
-      '<button onclick="removerOcorrencia('+i+')" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:12px;padding:0 10px;border-radius:8px;cursor:pointer;font-family:inherit;">×</button>'+
-      '</div>'+
-      '<select onchange="atualizarOcorrencia('+i+',\'status\',this.value)" style="margin-bottom:6px;font-size:13px;">'+
-      '<option '+(o.status==='Faltou'?'selected':'')+'>Faltou</option>'+
-      '<option '+(o.status==='Saiu mais cedo'?'selected':'')+'>Saiu mais cedo</option>'+
-      '</select>'+
-      '<input type="text" placeholder="Observação (opcional)" value="'+(o.obs||'')+'" oninput="atualizarOcorrencia('+i+',\'obs\',this.value)" style="font-size:13px;" />'+
-      '</div>';
-  }).join('');
+  let html='';
+  presencaOcorrencias.forEach(function(o,i){
+    html+='<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;margin-bottom:8px;">';
+    html+='<div style="display:flex;gap:6px;margin-bottom:6px;">';
+    html+='<input type="text" placeholder="Nome" data-idx="'+i+'" data-campo="nome" value="'+(o.nome||'').replace(/"/g,'&quot;')+'" oninput="atualizarOcorrencia(this.dataset.idx,this.dataset.campo,this.value)" style="flex:1;padding:8px;font-size:13px;" />';
+    html+='<button data-idx="'+i+'" onclick="removerOcorrencia(this.dataset.idx)" style="background:none;border:1px solid rgba(233,69,96,0.4);color:var(--accent);font-size:12px;padding:0 10px;border-radius:8px;cursor:pointer;font-family:inherit;">×</button>';
+    html+='</div>';
+    html+='<select data-idx="'+i+'" data-campo="status" onchange="atualizarOcorrencia(this.dataset.idx,this.dataset.campo,this.value)" style="margin-bottom:6px;font-size:13px;">';
+    html+='<option '+(o.status==='Faltou'?'selected':'')+'>Faltou</option>';
+    html+='<option '+(o.status==='Saiu mais cedo'?'selected':'')+'>Saiu mais cedo</option>';
+    html+='</select>';
+    html+='<input type="text" placeholder="Observação (opcional)" data-idx="'+i+'" data-campo="obs" value="'+(o.obs||'').replace(/"/g,'&quot;')+'" oninput="atualizarOcorrencia(this.dataset.idx,this.dataset.campo,this.value)" style="font-size:13px;" />';
+    html+='</div>';
+  });
+  el.innerHTML=html;
 }
 
 async function salvarPresenca(){
