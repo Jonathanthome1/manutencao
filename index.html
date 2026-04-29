@@ -773,7 +773,7 @@ function renderDetalhe(){
       <button onclick="salvarServicos()" class="btn btn-secondary" style="margin-top:8px;">Salvar serviços</button>
     </div>`;
   } else if(servSel.length>0||e.obsServico){
-    // Saiu: show read-only summary of services
+    // Saiu: read-only summary of services
     html+=`<div class="card">
       <div class="card-label">Serviços realizados</div>
       ${servSel.length>0?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:${e.obsServico?'10px':'0'};">
@@ -781,8 +781,9 @@ function renderDetalhe(){
       </div>`:''}
       ${e.obsServico?`<div style="font-size:13px;color:var(--text-primary);line-height:1.5;padding:10px;background:rgba(255,255,255,0.04);border-radius:10px;">${e.obsServico}</div>`:''}
     </div>`;
+  }
 
-    // STATUS ACTIONS
+  // STATUS ACTIONS - only when not saiu
   if(!isSaiu){
     html+=`<div class="section-div">Alterar status</div>`;
     if(e.status==='aguardando'){
@@ -807,7 +808,7 @@ function renderDetalhe(){
       </div>
       <button class="btn" style="background:rgba(245,158,11,0.1);color:var(--amarelo);border:1px solid rgba(245,158,11,0.3);margin-bottom:8px;" onclick="alterarStatus('andamento')">🔧 Voltar para andamento</button>`;
     }
-  } // end !isSaiu status actions
+  }
 
   // HISTÓRICO
   if(e.historico&&e.historico.length>0){
@@ -826,7 +827,7 @@ function renderDetalhe(){
   </div>`;
 
   el.innerHTML=html;
-}} // end renderDetalhe
+} // end renderDetalhe
 
 async function toggleServico(servico){
   if(!equipAtivo)return;
